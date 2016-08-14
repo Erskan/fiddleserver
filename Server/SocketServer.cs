@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.WebSockets;
 using System.Threading;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace FiddleServer.SocketServer
 {
@@ -19,7 +21,7 @@ namespace FiddleServer.SocketServer
             HttpListener httpListener = new HttpListener();
             httpListener.Prefixes.Add(listenerPrefix);
             httpListener.Start();
-            Console.WriteLine("Listening for incoming HTTP calls...");
+            Console.WriteLine("Listening for incoming WebSocket calls...");
 
             while (true)
             {
@@ -30,7 +32,8 @@ namespace FiddleServer.SocketServer
                 }
                 else
                 {
-                    httpContext.Response.StatusCode = 400;
+                    // Upgrade required
+                    httpContext.Response.StatusCode = 426;
                     httpContext.Response.Close();
                 }
             }
@@ -71,7 +74,9 @@ namespace FiddleServer.SocketServer
                     }
                     else
                     {
-                        await socket.SendAsync(new ArraySegment<byte>(receiveBuffer, 0, socketResult.Count), WebSocketMessageType.Binary, socketResult.EndOfMessage, CancellationToken.None);
+                        //Console.WriteLine("Message recieved.");
+                        //await socket.SendAsync(new ArraySegment<byte>(receiveBuffer, 0, socketResult.Count), WebSocketMessageType.Binary, socketResult.EndOfMessage, CancellationToken.None);
+                        HandleMessage(socketResult, receiveBuffer);
                     }
                 }
             }
@@ -84,6 +89,13 @@ namespace FiddleServer.SocketServer
                 if (socket != null)
                     socket.Dispose();
             }
+        }
+
+        private void HandleMessage(WebSocketReceiveResult message, byte[] messageData)
+        {
+            string decodedMessage = Encoding.UTF8.GetString(messageData).Substring(0, message.Count);
+            Console.WriteLine(decodedMessage);
+            var jsonMessage = JsonConvert.DeserializeObject(decodedMessage);
         }
     }
 }
