@@ -15,39 +15,21 @@ namespace FiddleServer.SocketServer
     {
         //  TODO: Handle multiple connections at once
         private WebSocket socket;
+        private HttpListenerContext request;
 
-        /// <summary>
-        /// Starts the Websocket server by listening for requests
-        /// </summary>
-        public async void Start(string listenerPrefix)
+        public SocketServer(HttpListenerContext hlc)
         {
-            HttpListener httpListener = new HttpListener();
-            httpListener.Prefixes.Add(listenerPrefix);
-            httpListener.Start();
-            Console.WriteLine("Listening for incoming WebSocket calls...");
-
-            while (true)
-            {
-                HttpListenerContext httpContext = await httpListener.GetContextAsync();
-                if(httpContext.Request.IsWebSocketRequest)
-                {
-                    ProcessRequest(httpContext);
-                }
-                else
-                {
-                    // Upgrade required
-                    httpContext.Response.StatusCode = 426;
-                    httpContext.Response.Close();
-                }
-            }
+            Console.WriteLine("SOCKET: Constructing socket.");
+            request = hlc;
+            Thread.Sleep(1);
         }
 
         /// <summary>
-        /// Handle incoming requests
+        /// Handle incoming requests to the socket
         /// </summary>
-        /// <param name="request">WebSocket request made to the server</param>
-        private async void ProcessRequest(HttpListenerContext request)
+        public async void ProcessRequest()
         {
+            Console.WriteLine("SOCKET: Processing socket request.");
             WebSocketContext socketContext = null;
             string clientIP = request.Request.RemoteEndPoint.Address.ToString();
             try

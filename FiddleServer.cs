@@ -12,7 +12,7 @@ namespace FiddleServer
     {
         static void Main(string[] args)
         {
-            SocketServer.SocketServer ws = new SocketServer.SocketServer();
+            Server.HTTPUpgrader ws = new Server.HTTPUpgrader();
             ws.Start("http://localhost:9000/websocket/");
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
