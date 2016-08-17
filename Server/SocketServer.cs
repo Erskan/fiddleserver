@@ -9,11 +9,12 @@ using System.Threading;
 using System.IO;
 using Newtonsoft.Json;
 
+using FiddleServer.Server;
+
 namespace FiddleServer.SocketServer
 {
     class SocketServer
     {
-        //  TODO: Handle multiple connections at once
         private WebSocket socket;
         private HttpListenerContext request;
 
@@ -69,6 +70,7 @@ namespace FiddleServer.SocketServer
             }
             finally
             {
+                //GameState.DisconnectPlayer(clientIP); /* Dont use clientIP for id. Should find something better. */
                 if (socket != null)
                     socket.Dispose();
             }
@@ -82,10 +84,23 @@ namespace FiddleServer.SocketServer
         private void HandleMessage(WebSocketReceiveResult message, byte[] messageData)
         {
             string decodedMessage = Encoding.UTF8.GetString(messageData).Substring(0, message.Count);
-            Console.WriteLine(decodedMessage);
-            var jsonMessage = JsonConvert.DeserializeObject(decodedMessage);
+            //Console.WriteLine(decodedMessage);
+            
+            Message msg = JsonConvert.DeserializeObject<Message>(decodedMessage);
+
+            switch (msg.message)
+            {
+                case "player":
+                    GameState.HandleIncomingPlayer(msg.player);
+                    break;
+
+
+                default:
+                    Console.WriteLine("Unrecognized message type {0}. Ignoring...", msg.message);
+                    break;
+            }
             // TODO: Game logic
-            SendMessage("Message handled.");
+            //SendMessage("Message handled.");
         }
 
         /// <summary>

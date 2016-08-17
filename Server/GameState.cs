@@ -8,7 +8,7 @@ namespace FiddleServer.Server
 {
     static class GameState
     {
-        static volatile List<Player.Player> players;
+        static volatile List<Player.Player> players = new List<Player.Player>();
 
         /// <summary>
         /// Adds player to list
@@ -20,12 +20,29 @@ namespace FiddleServer.Server
         }
 
         /// <summary>
+        /// Updates or creates a player depending on if they can be found in the list.
+        /// </summary>
+        /// <param name="p">Decoded player object</param>
+        static public void HandleIncomingPlayer(Player.Player p)
+        {
+            Player.Player pExist = players.Find(x => x.ip == p.ip);
+            if (pExist == null)
+            {
+                ConnectPlayer(p);
+                Console.WriteLine("GAMESTATE: Player " + p.name + " created.");
+                return;
+            }
+            int idx = players.IndexOf(pExist);
+            players[idx] = p;
+        }
+
+        /// <summary>
         /// Removes player by IP if player exists in list
         /// </summary>
         /// <param name="iip">IP of player to remove. Used to identify</param>
         static public void DisconnectPlayer(string iip)
         {
-            players.Remove(players.Find(x => x.Ip == iip));
+            players.Remove(players.Find(x => x.ip == iip));
         }
     }
 }
