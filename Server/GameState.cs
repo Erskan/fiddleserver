@@ -9,6 +9,7 @@ namespace FiddleServer.Server
     static class GameState
     {
         static volatile List<Player.Player> players = new List<Player.Player>();
+        public static volatile int sessionBest = 0;
 
         /// <summary>
         /// Adds player to list
@@ -17,6 +18,7 @@ namespace FiddleServer.Server
         static public void ConnectPlayer(Player.Player newPlayer)
         {
             players.Add(newPlayer);
+            Console.WriteLine("GAMESTATE: Player with id: " + newPlayer.id + " is now being tracked...");
         }
 
         /// <summary>
@@ -25,11 +27,10 @@ namespace FiddleServer.Server
         /// <param name="p">Decoded player object</param>
         static public void HandleIncomingPlayer(Player.Player p)
         {
-            Player.Player pExist = players.Find(x => x.ip == p.ip);
+            Player.Player pExist = players.Find(x => x.id == p.id);
             if (pExist == null)
             {
                 ConnectPlayer(p);
-                Console.WriteLine("GAMESTATE: Player " + p.name + " created.");
                 return;
             }
             int idx = players.IndexOf(pExist);
@@ -40,9 +41,13 @@ namespace FiddleServer.Server
         /// Removes player by IP if player exists in list
         /// </summary>
         /// <param name="iip">IP of player to remove. Used to identify</param>
-        static public void DisconnectPlayer(string iip)
+        static public void DisconnectPlayer(string iid)
         {
-            players.Remove(players.Find(x => x.ip == iip));
+            Player.Player exitingPlayer = players.Find(x => x.id == iid);
+            Console.WriteLine("GAMESTATE: Player with id: " + exitingPlayer.id + " is exiting the session with a score of " + exitingPlayer.points.ToString());
+            if (exitingPlayer.points > sessionBest)
+                sessionBest = exitingPlayer.points;
+            players.Remove(exitingPlayer);
         }
     }
 }

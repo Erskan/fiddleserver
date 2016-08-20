@@ -8,14 +8,14 @@ namespace FiddleServer.Player
 {
     class Player : IEquatable<Player>
     {
-        public string name, ip;
+        public string name, id;
         public double x, y, speedx, speedy;
         public int points;
         public Object model;
                 
         public bool Equals(Player other)
         {
-            return (this.ip.Equals(other.ip));
+            return (this.id.Equals(other.id));
         }
     }
 }

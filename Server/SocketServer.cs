@@ -36,7 +36,7 @@ namespace FiddleServer.SocketServer
             try
             {
                 socketContext = await request.AcceptWebSocketAsync(subProtocol: null);
-                Console.WriteLine("{0} connected to the server.", clientIP);
+                Console.WriteLine("SOCKET: {0} connected to the server.", clientIP);
             }
             catch (Exception e)
             {
@@ -56,7 +56,7 @@ namespace FiddleServer.SocketServer
                     if(socketResult.MessageType == WebSocketMessageType.Close)
                     {
                         await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-                        Console.WriteLine("{0} disconnected from the server.", clientIP);
+                        Console.WriteLine("SOCKET: {0} disconnected from the server.", clientIP);
                     }
                     else
                     {
@@ -94,9 +94,16 @@ namespace FiddleServer.SocketServer
                     GameState.HandleIncomingPlayer(msg.player);
                     break;
 
+                case "endgame":
+                    string endOfGameMessage = (msg.player.points > GameState.sessionBest) ? "You set a new record with: " + msg.player.points.ToString() + " points!" : "The score to beat this session is: " + GameState.sessionBest.ToString() + " points!";
+                    //Console.WriteLine(endOfGameMessage);
+                    SendMessage(endOfGameMessage);
+                    GameState.DisconnectPlayer(msg.player.id);
+                    break;
+
 
                 default:
-                    Console.WriteLine("Unrecognized message type {0}. Ignoring...", msg.message);
+                    Console.WriteLine("SOCKET: Unrecognized message type {0}. Ignoring...", msg.message);
                     break;
             }
             // TODO: Game logic
