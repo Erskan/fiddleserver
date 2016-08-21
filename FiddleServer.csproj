@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\Alert.cs" />
+    <Compile Include="Actors\Target.cs" />
     <Compile Include="FiddleServer.cs" />
     <Compile Include="Actors\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

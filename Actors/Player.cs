@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace FiddleServer.Player
 {
+    [Serializable]
     class Player : IEquatable<Player>
     {
         public string name, id;

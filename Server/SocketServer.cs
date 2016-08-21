@@ -90,6 +90,11 @@ namespace FiddleServer.SocketServer
 
             switch (msg.message)
             {
+                case "start":
+                    GameState.HandleIncomingPlayer(msg.player);
+                    SendMessage(GameState.GetTargetMessage());
+                    break;
+
                 case "player":
                     GameState.HandleIncomingPlayer(msg.player);
                     break;
@@ -99,6 +104,15 @@ namespace FiddleServer.SocketServer
                     //Console.WriteLine(endOfGameMessage);
                     SendMessage(endOfGameMessage);
                     GameState.DisconnectPlayer(msg.player.id);
+                    break;
+
+                case "registerpoint":
+                    GameState.RegisterPoint(msg.player);
+                    SendMessage(GameState.GetTargetMessage());
+                    break;
+
+                case "targetrequest":
+                    SendMessage(GameState.GetTarget());
                     break;
 
 
@@ -116,6 +130,8 @@ namespace FiddleServer.SocketServer
         /// <param name="message">The message in string format</param>
         private void SendMessage(string message)
         {
+            Console.WriteLine("SOCKET: Sending message: " + message);
+            // TODO: Check if we should be sending Server.Message type back to client as well.
             SendMessage(Encoding.UTF8.GetByteCount(message), Encoding.UTF8.GetBytes(message));
         }
 
