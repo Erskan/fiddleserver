@@ -97,7 +97,7 @@ namespace FiddleServer.SocketServer
                     break;
 
                 case "player":
-                    Console.WriteLine("SOCKET: player message.");
+                    //Console.WriteLine("SOCKET: player message.");
                     if (!GameState.GetTarget().Id.Equals(msg.target.Id)) // If there is a target mismatch we need to update the client target.
                     {
                         SendMessage(JsonConvert.SerializeObject(new Message
