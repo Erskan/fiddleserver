@@ -91,15 +91,28 @@ namespace FiddleServer.SocketServer
             switch (msg.message)
             {
                 case "start":
+                    Console.WriteLine("SOCKET: start message.");
                     GameState.HandleIncomingPlayer(msg.player);
                     SendMessage(GameState.GetTargetMessage());
                     break;
 
                 case "player":
+                    Console.WriteLine("SOCKET: player message.");
+                    if (!GameState.GetTarget().Id.Equals(msg.target.Id)) // If there is a target mismatch we need to update the client target.
+                    {
+                        SendMessage(JsonConvert.SerializeObject(new Message
+                        {
+                            message = "newtarget",
+                            player = null, /* send scoring player id to update scoreboard? */
+                            target = GameState.GetTarget(),
+                            alertmessage = null
+                        }));
+                    }
                     GameState.HandleIncomingPlayer(msg.player);
                     break;
 
                 case "endgame":
+                    Console.WriteLine("SOCKET: endgame message.");
                     string endOfGameMessage = (msg.player.points > GameState.sessionBest) ? "You set a new record with: " + msg.player.points.ToString() + " points!" : "The score to beat this session is: " + GameState.sessionBest.ToString() + " points!";
                     //Console.WriteLine(endOfGameMessage);
                     SendMessage(endOfGameMessage);
@@ -107,12 +120,14 @@ namespace FiddleServer.SocketServer
                     break;
 
                 case "registerpoint":
+                    Console.WriteLine("SOCKET: registerpoint message.");
                     GameState.RegisterPoint(msg.player);
                     SendMessage(GameState.GetTargetMessage());
                     break;
 
                 case "targetrequest":
-                    SendMessage(GameState.GetTarget());
+                    Console.WriteLine("SOCKET: targetrequest message.");
+                    SendMessage(GameState.GetTargetMessage());
                     break;
 
 

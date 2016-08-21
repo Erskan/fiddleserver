@@ -19,6 +19,7 @@ namespace FiddleServer.Server
         /// </summary>
         static GameState()
         {
+            currentTarget.GenerateTargetValues();
             Console.WriteLine("GAMESTATE: Initialized GameState...");
         }
 
@@ -70,14 +71,9 @@ namespace FiddleServer.Server
             return sessionBest;
         }
 
-        /// <summary>
-        /// Serializes the current target into a Json string and returns it
-        /// </summary>
-        /// <returns>The target as Json</returns>
-        static public string GetTarget()
+        static public Actors.Target GetTarget()
         {
-            string target = JsonConvert.SerializeObject(currentTarget);
-            return target;
+            return currentTarget;
         }
 
         static public string GetTargetMessage()
@@ -90,9 +86,11 @@ namespace FiddleServer.Server
 
         internal static void RegisterPoint(Player.Player player)
         {
-            player.points++;
+            int idx = players.IndexOf(player);
+            players[idx].points++;
             currentTarget = new Actors.Target();
-            // TODO: Invoke cross thread event to update target for all sockets
+            currentTarget.GenerateTargetValues();
+            // TODO: Invoke cross thread event to update target for all sockets?
         }
     }
 }
