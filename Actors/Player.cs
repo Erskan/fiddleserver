@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FiddleServer.Player
+namespace FiddleServer.Actors
 {
     [Serializable]
     class Player : IEquatable<Player>
@@ -12,7 +12,7 @@ namespace FiddleServer.Player
         public string name, id;
         public double x, y, speedx, speedy;
         public int points;
-        public Object model;
+        public object model;
                 
         public bool Equals(Player other)
         {

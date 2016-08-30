@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FiddleServer.Player;
+using FiddleServer.Actors;
 using Newtonsoft.Json;
 
 namespace FiddleServer.Server
 {
     static class GameState
     {
-        static volatile List<Player.Player> players = new List<Player.Player>();
+        static volatile List<Actors.Player> players = new List<Actors.Player>();
         static volatile Actors.Target currentTarget = new Actors.Target();
         public static volatile int sessionBest = 0;
 
@@ -27,7 +27,7 @@ namespace FiddleServer.Server
         /// Adds player to list
         /// </summary>
         /// <param name="newPlayer">The player to add</param>
-        static public void ConnectPlayer(Player.Player newPlayer)
+        static public void ConnectPlayer(Actors.Player newPlayer)
         {
             players.Add(newPlayer);
             Console.WriteLine("GAMESTATE: Player with id: " + newPlayer.id + " is now being tracked...");
@@ -37,9 +37,9 @@ namespace FiddleServer.Server
         /// Updates or creates a player depending on if they can be found in the list.
         /// </summary>
         /// <param name="p">Decoded player object</param>
-        static public void HandleIncomingPlayer(Player.Player p)
+        static public void HandleIncomingPlayer(Actors.Player p)
         {
-            Player.Player pExist = players.Find(x => x.id == p.id);
+            Actors.Player pExist = players.Find(x => x.id == p.id);
             if (pExist == null)
             {
                 ConnectPlayer(p);
@@ -55,7 +55,7 @@ namespace FiddleServer.Server
         /// <param name="iip">IP of player to remove. Used to identify</param>
         static public void DisconnectPlayer(string iid)
         {
-            Player.Player exitingPlayer = players.Find(x => x.id == iid);
+            Actors.Player exitingPlayer = players.Find(x => x.id == iid);
             Console.WriteLine("GAMESTATE: Player with id: " + exitingPlayer.id + " is exiting the session with a score of " + exitingPlayer.points.ToString());
             if (exitingPlayer.points > sessionBest)
                 sessionBest = exitingPlayer.points;
@@ -84,7 +84,7 @@ namespace FiddleServer.Server
             return JsonConvert.SerializeObject(clientTargetMessage);
         }
 
-        internal static void RegisterPoint(Player.Player player)
+        internal static void RegisterPoint(Actors.Player player)
         {
             int idx = players.IndexOf(player);
             players[idx].points++;

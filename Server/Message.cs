@@ -14,7 +14,7 @@ namespace FiddleServer.Server
     class Message
     {
         public string message;
-        public Player.Player player;
+        public Actors.Player player;
         public Actors.Target target;
         public Actors.Alert alertmessage;
     }
