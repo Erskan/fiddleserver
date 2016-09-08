@@ -94,7 +94,7 @@ namespace FiddleServer.SocketServer
                 case "start":
                     Console.WriteLine("SOCKET: start message.");
                     GameState.HandleIncomingPlayer(msg.player);
-                    SendMessage(GameState.GetTargetMessage());
+                    SendMessage(GameState.GetTargetMessageString());
                     break;
 
                 case "player":
@@ -123,12 +123,12 @@ namespace FiddleServer.SocketServer
                 case "registerpoint":
                     Console.WriteLine("SOCKET: registerpoint message.");
                     GameState.RegisterPoint(msg.player);
-                    SendMessage(GameState.GetTargetMessage());
+                    SendMessage(GameState.GetTargetMessageString());
                     break;
 
                 case "targetrequest":
                     Console.WriteLine("SOCKET: targetrequest message.");
-                    SendMessage(GameState.GetTargetMessage());
+                    SendMessage(GameState.GetTargetMessageString());
                     break;
 
 

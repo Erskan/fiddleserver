@@ -69,11 +69,12 @@ namespace FiddleServer.Server
         /// Sends a given message to every client in the socket collection
         /// </summary>
         /// <param name="msg">The message to broadcast</param>
-        public static void BroadCastMessage(string msg)
+        public static void BroadCastMessage(Message msg)
         {
+            Console.WriteLine("GAMESTATE: Broadcasting message to all clients.");
             foreach (var socket in socketList)
             {
-                socket.SendMessage(msg);
+                socket.SendMessage(JsonConvert.SerializeObject(msg));
             }
         }
 
@@ -134,15 +135,27 @@ namespace FiddleServer.Server
         }
 
         /// <summary>
-        /// Generate a message for the clients to read
+        /// Generate a message for the clients to read as string
         /// </summary>
         /// <returns>The message as a JSON string</returns>
-        static public string GetTargetMessage()
+        static public string GetTargetMessageString()
         {
             Message clientTargetMessage = new Message();
             clientTargetMessage.message = "newtarget";
             clientTargetMessage.target = currentTarget;
             return JsonConvert.SerializeObject(clientTargetMessage);
+        }
+
+        /// <summary>
+        /// Generate a message for the clients to read
+        /// </summary>
+        /// <returns>The message object</returns>
+        static public Message GetTargetMessage()
+        {
+            Message clientTargetMessage = new Message();
+            clientTargetMessage.message = "newtarget";
+            clientTargetMessage.target = currentTarget;
+            return clientTargetMessage;
         }
 
         /// <summary>
@@ -161,8 +174,8 @@ namespace FiddleServer.Server
                 currentTarget = new Actors.Target();
                 currentTarget.GenerateTargetValues();
             }
-            
-            // TODO: Broadcast point score and new target
+            // Notify all clients that a new target is generated
+            BroadCastMessage(GetTargetMessage());
         }
     }
 }
