@@ -13,6 +13,8 @@ namespace FiddleServer.Server
         static volatile List<Actors.Player> players = new List<Actors.Player>();
         static volatile Actors.Target currentTarget = new Actors.Target();
         public static volatile int sessionBest = 0;
+        public static List<SocketServer.SocketServer> socketList = new List<SocketServer.SocketServer>();
+        private static readonly object _listLocker = new object();
 
         /// <summary>
         /// Initialize the static class before we need so it has a target ready
@@ -31,6 +33,42 @@ namespace FiddleServer.Server
         {
             players.Add(newPlayer);
             Console.WriteLine("GAMESTATE: Player with id: " + newPlayer.id + " is now being tracked...");
+        }
+
+        /// <summary>
+        /// Adds the socket to the list of sockets handled by the server
+        /// </summary>
+        /// <param name="srv">New socket to add</param>
+        static public void AddSocket(SocketServer.SocketServer srv)
+        {
+            lock(_listLocker)
+            {
+                socketList.Add(srv);
+            }
+        }
+
+        /// <summary>
+        /// Removes the disconnected socket from the server
+        /// </summary>
+        /// <param name="srv">Socket to remove</param>
+        static public void RemoveSocket(SocketServer.SocketServer srv)
+        {
+            lock (_listLocker)
+            {
+                socketList.Remove(srv);
+            }
+        }
+
+        /// <summary>
+        /// Sends a given message to every client in the socket collection
+        /// </summary>
+        /// <param name="msg">The message to broadcast</param>
+        public static void BroadCastMessage(string msg)
+        {
+            foreach (var socket in socketList)
+            {
+                socket.SendMessage(msg);
+            }
         }
 
         /// <summary>

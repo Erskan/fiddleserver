@@ -56,6 +56,7 @@ namespace FiddleServer.SocketServer
                     if(socketResult.MessageType == WebSocketMessageType.Close)
                     {
                         await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                        GameState.RemoveSocket(this);
                         Console.WriteLine("SOCKET: {0} disconnected from the server.", clientIP);
                     }
                     else
@@ -143,7 +144,7 @@ namespace FiddleServer.SocketServer
         /// Sends a text message to the client
         /// </summary>
         /// <param name="message">The message in string format</param>
-        private void SendMessage(string message)
+        public void SendMessage(string message)
         {
             Console.WriteLine("SOCKET: Sending message: " + message);
             // TODO: Check if we should be sending Server.Message type back to client as well.

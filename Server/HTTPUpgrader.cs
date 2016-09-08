@@ -25,6 +25,7 @@ namespace FiddleServer.Server
                 {
                     Console.WriteLine("HTTP: Incoming connection. Starting socket thread...");
                     SocketServer.SocketServer oSocket = new SocketServer.SocketServer(httpContext);
+                    GameState.AddSocket(oSocket);
                     Thread newSocket = new Thread(new ThreadStart(oSocket.ProcessRequest));
                     newSocket.Start();
                 }
