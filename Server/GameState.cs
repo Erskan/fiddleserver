@@ -10,9 +10,9 @@ namespace FiddleServer.Server
 {
     static class GameState
     {
-        static volatile List<Actors.Player> players = new List<Actors.Player>();
+        static List<Actors.Player> players = new List<Actors.Player>();
         private static readonly object _playersLock = new object();
-        static volatile Actors.Target currentTarget = new Actors.Target();
+        static Actors.Target currentTarget = new Actors.Target();
         private static readonly object _targetLock = new object();
         public static int sessionBest = 0;
         private static readonly object _sessionBestLock = new object();
