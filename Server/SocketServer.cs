@@ -91,13 +91,14 @@ namespace FiddleServer.SocketServer
 
             switch (msg.message)
             {
+                // Send entire state to client
                 case "start":
                     Console.WriteLine("SOCKET: start message.");
                     GameState.HandleIncomingPlayer(msg.player);
                     SendMessage(GameState.GetTargetMessageString());
                     break;
-
-                case "player":
+                // Regular tick
+                case "tick":
                     //Console.WriteLine("SOCKET: player message.");
                     if (!GameState.GetTarget().Id.Equals(msg.target.Id)) // If there is a target mismatch we need to update the client target.
                     {
@@ -111,7 +112,7 @@ namespace FiddleServer.SocketServer
                     }
                     GameState.HandleIncomingPlayer(msg.player);
                     break;
-
+                // Client disconnection
                 case "endgame":
                     Console.WriteLine("SOCKET: endgame message.");
                     string endOfGameMessage = (msg.player.points > GameState.sessionBest) ? "You set a new record with: " + msg.player.points.ToString() + " points!" : "The score to beat this session is: " + GameState.sessionBest.ToString() + " points!";
@@ -119,13 +120,13 @@ namespace FiddleServer.SocketServer
                     SendMessage(endOfGameMessage);
                     GameState.DisconnectPlayer(msg.player.id);
                     break;
-
+                // Client scored
                 case "registerpoint":
                     Console.WriteLine("SOCKET: registerpoint message.");
                     GameState.RegisterPoint(msg.player);
                     SendMessage(GameState.GetTargetMessageString());
                     break;
-
+                // Client needs current target
                 case "targetrequest":
                     Console.WriteLine("SOCKET: targetrequest message.");
                     SendMessage(GameState.GetTargetMessageString());
