@@ -27,6 +27,7 @@ namespace FiddleServer.Actors
             Console.WriteLine("TARGET: id: " + Id.ToString() + " x: " + X.ToString() + " y: " + Y.ToString() + " size: " + Size.ToString());
         }
 
+        #region GetSet
         public Guid Id
         {
             get
@@ -78,5 +79,6 @@ namespace FiddleServer.Actors
                 y = value;
             }
         }
+        #endregion
     }
 }

@@ -17,10 +17,13 @@ namespace FiddleServer.SocketServer
     {
         private WebSocket socket;
         private HttpListenerContext request;
+        private string gId;
+        private ulong tickCount;
 
         public SocketServer(HttpListenerContext hlc)
         {
             Console.WriteLine("SOCKET: Constructing socket.");
+            tickCount = 0;
             request = hlc;
             Thread.Sleep(1);
         }
@@ -93,9 +96,10 @@ namespace FiddleServer.SocketServer
             {
                 // Send entire state to client
                 case "start":
-                    Console.WriteLine("SOCKET: start message.");
-                    GameState.HandleIncomingPlayer(msg.player);
-                    SendMessage(GameState.GetTargetMessageString());
+                    Console.WriteLine("SOCKET: start message from player {0}.", msg.players[0].id);
+                    gId = msg.players[0].id;
+                    GameState.HandleIncomingPlayer(msg.players[0]);
+                    SendMessage(JsonConvert.SerializeObject(GameState.GetGameStartMessage()));
                     break;
                 // Regular tick
                 case "tick":
@@ -105,25 +109,25 @@ namespace FiddleServer.SocketServer
                         SendMessage(JsonConvert.SerializeObject(new Message
                         {
                             message = "newtarget",
-                            player = null, /* send scoring player id to update scoreboard? */
+                            players = null, /* send scoring player id to update scoreboard? */
                             target = GameState.GetTarget(),
                             alertmessage = null
                         }));
                     }
-                    GameState.HandleIncomingPlayer(msg.player);
+                    GameState.HandleIncomingPlayer(msg.players[0]);
                     break;
                 // Client disconnection
                 case "endgame":
                     Console.WriteLine("SOCKET: endgame message.");
-                    string endOfGameMessage = (msg.player.points > GameState.sessionBest) ? "You set a new record with: " + msg.player.points.ToString() + " points!" : "The score to beat this session is: " + GameState.sessionBest.ToString() + " points!";
+                    string endOfGameMessage = (msg.players[0].points > GameState.sessionBest) ? "You set a new record with: " + msg.players[0].points.ToString() + " points!" : "The score to beat this session is: " + GameState.sessionBest.ToString() + " points!";
                     //Console.WriteLine(endOfGameMessage);
                     SendMessage(endOfGameMessage);
-                    GameState.DisconnectPlayer(msg.player.id);
+                    GameState.DisconnectPlayer(msg.players[0].id);
                     break;
                 // Client scored
                 case "registerpoint":
                     Console.WriteLine("SOCKET: registerpoint message.");
-                    GameState.RegisterPoint(msg.player);
+                    GameState.RegisterPoint(msg.players[0]);
                     SendMessage(GameState.GetTargetMessageString());
                     break;
                 // Client needs current target
@@ -147,7 +151,8 @@ namespace FiddleServer.SocketServer
         /// <param name="message">The message in string format</param>
         public void SendMessage(string message)
         {
-            Console.WriteLine("SOCKET: Sending message: " + message);
+            // Don't spam the console...
+            //Console.WriteLine("SOCKET: Sending message: " + message);
             // TODO: Check if we should be sending Server.Message type back to client as well.
             SendMessage(Encoding.UTF8.GetByteCount(message), Encoding.UTF8.GetBytes(message));
         }

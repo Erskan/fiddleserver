@@ -11,6 +11,7 @@ namespace FiddleServer.Actors
     {
         private string alertmsg;
 
+        #region GetSet
         public string AlertMessage
         {
             get
@@ -23,5 +24,6 @@ namespace FiddleServer.Actors
                 alertmsg = value;
             }
         }
+        #endregion
     }
 }

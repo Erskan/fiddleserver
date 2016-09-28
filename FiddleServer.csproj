@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\Alert.cs" />
+    <Compile Include="Actors\PlayerModel.cs" />
     <Compile Include="Actors\Target.cs" />
     <Compile Include="FiddleServer.cs" />
     <Compile Include="Actors\Player.cs" />
@@ -60,6 +61,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

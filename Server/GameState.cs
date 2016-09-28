@@ -12,6 +12,8 @@ namespace FiddleServer.Server
     {
         static List<Actors.Player> players = new List<Actors.Player>();
         private static readonly object _playersLock = new object();
+        static List<PlayerModel> models = new List<PlayerModel>();
+        private static readonly object _modelsLock = new object();
         static Actors.Target currentTarget = new Actors.Target();
         private static readonly object _targetLock = new object();
         public static int sessionBest = 0;
@@ -156,6 +158,26 @@ namespace FiddleServer.Server
             clientTargetMessage.message = "newtarget";
             clientTargetMessage.target = currentTarget;
             return clientTargetMessage;
+        }
+
+        /// <summary>
+        /// Dumps all current info to the starting client
+        /// </summary>
+        /// <returns>Message ready to be serialized.</returns>
+        static public Message GetGameStartMessage()
+        {
+            Message clientStartMessage = new Message();
+            clientStartMessage.message = "start";
+            lock (_playersLock)
+            {
+                clientStartMessage.players = GameState.players;
+            }
+            lock (_modelsLock)
+            {
+                clientStartMessage.models = GameState.models;
+            }
+            clientStartMessage.target = GetTarget();
+            return clientStartMessage;
         }
 
         /// <summary>
