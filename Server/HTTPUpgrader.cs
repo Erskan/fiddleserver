@@ -14,9 +14,19 @@ namespace FiddleServer.Server
         public async void Start(string listenerPrefix)
         {
             HttpListener httpListener = new HttpListener();
-            httpListener.Prefixes.Add(listenerPrefix);
-            httpListener.Start();
-            Console.WriteLine("HTTP: Listening for incoming WebSocket calls...");
+            try
+            {
+                httpListener.Prefixes.Add(listenerPrefix);
+                httpListener.Start();
+                Console.WriteLine("HTTP: Listening for incoming WebSocket calls...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("HTTP: Error starting the httplistener.");
+                Console.WriteLine(ex.ToString());
+                throw ex;
+            }
+            
 
             while (true)
             {

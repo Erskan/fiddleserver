@@ -119,6 +119,15 @@ namespace FiddleServer.Server
         }
 
         /// <summary>
+        /// Gets the list of active players
+        /// </summary>
+        /// <returns>List of players</returns>
+        internal static List<Player> GetPlayers()
+        {
+            return players;
+        }
+
+        /// <summary>
         /// Returns this sessions highest recorded score.
         /// </summary>
         /// <returns>The score as an integer.</returns>
@@ -197,7 +206,7 @@ namespace FiddleServer.Server
                 currentTarget.GenerateTargetValues();
             }
             // Notify all clients that a new target is generated
-            BroadCastMessage(GetTargetMessage());
+            //BroadCastMessage(GetTargetMessage());
         }
     }
 }

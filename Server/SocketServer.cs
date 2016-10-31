@@ -108,8 +108,8 @@ namespace FiddleServer.SocketServer
                     {
                         SendMessage(JsonConvert.SerializeObject(new Message
                         {
-                            message = "newtarget",
-                            players = null, /* send scoring player id to update scoreboard? */
+                            message = "tick",
+                            players = GameState.GetPlayers(),
                             target = GameState.GetTarget(),
                             alertmessage = null
                         }));
