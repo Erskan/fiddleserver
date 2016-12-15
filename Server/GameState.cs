@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FiddleServer.Actors;
 using Newtonsoft.Json;
 
@@ -151,9 +148,11 @@ namespace FiddleServer.Server
         /// <returns>The message as a JSON string</returns>
         static public string GetTargetMessageString()
         {
-            Message clientTargetMessage = new Message();
-            clientTargetMessage.message = "newtarget";
-            clientTargetMessage.target = currentTarget;
+            Message clientTargetMessage = new Message()
+            {
+                message = "newtarget",
+                target = currentTarget
+            };
             return JsonConvert.SerializeObject(clientTargetMessage);
         }
 
@@ -163,9 +162,11 @@ namespace FiddleServer.Server
         /// <returns>The message object</returns>
         static public Message GetTargetMessage()
         {
-            Message clientTargetMessage = new Message();
-            clientTargetMessage.message = "newtarget";
-            clientTargetMessage.target = currentTarget;
+            Message clientTargetMessage = new Message()
+            {
+                message = "newtarget",
+                target = currentTarget
+            };
             return clientTargetMessage;
         }
 
@@ -175,8 +176,10 @@ namespace FiddleServer.Server
         /// <returns>Message ready to be serialized.</returns>
         static public Message GetGameStartMessage()
         {
-            Message clientStartMessage = new Message();
-            clientStartMessage.message = "start";
+            Message clientStartMessage = new Message()
+            {
+                message = "start"
+            };
             lock (_playersLock)
             {
                 clientStartMessage.players = GameState.players;

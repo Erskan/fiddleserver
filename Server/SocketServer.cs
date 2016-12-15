@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.WebSockets;
 using System.Threading;
-using System.IO;
 using Newtonsoft.Json;
 
 using FiddleServer.Server;
@@ -154,7 +150,7 @@ namespace FiddleServer.SocketServer
             // Don't spam the console...
             //Console.WriteLine("SOCKET: Sending message: " + message);
             // TODO: Check if we should be sending Server.Message type back to client as well.
-            SendMessage(Encoding.UTF8.GetByteCount(message), Encoding.UTF8.GetBytes(message));
+            SendMessageAsync(Encoding.UTF8.GetByteCount(message), Encoding.UTF8.GetBytes(message));
         }
 
         /// <summary>
@@ -162,7 +158,7 @@ namespace FiddleServer.SocketServer
         /// </summary>
         /// <param name="messageLength">Number of bytes to send</param>
         /// <param name="messageData">The byte array containing the message</param>
-        private async void SendMessage(int messageLength, byte[] messageData)
+        private async void SendMessageAsync(int messageLength, byte[] messageData)
         {
             await socket.SendAsync(new ArraySegment<byte>(messageData, 0, messageLength), WebSocketMessageType.Binary, true, CancellationToken.None);
         }
