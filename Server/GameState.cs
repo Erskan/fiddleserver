@@ -70,7 +70,7 @@ namespace FiddleServer.Server
         /// <param name="msg">The message to broadcast</param>
         public static void BroadCastMessage(Message msg)
         {
-            Console.WriteLine("GAMESTATE: Broadcasting message to all clients.");
+            //Console.WriteLine("GAMESTATE: Broadcasting message to all clients.");
             foreach (var socket in socketList)
             {
                 socket.SendMessage(JsonConvert.SerializeObject(msg));
@@ -78,18 +78,12 @@ namespace FiddleServer.Server
         }
 
         /// <summary>
-        /// Updates or creates a player depending on if they can be found in the list.
+        /// Updates player with client data.
         /// </summary>
         /// <param name="p">Decoded player object</param>
-        static public void HandleIncomingPlayer(Actors.Player p)
+        static public void UpdatePlayer(Actors.Player p)
         {
-            Actors.Player pExist = players.Find(x => x.id == p.id);
-            if (pExist == null)
-            {
-                ConnectPlayer(p);
-                return;
-            }
-            int idx = players.IndexOf(pExist);
+            int idx = players.IndexOf(p);
             lock (_playersLock)
             {
                 players[idx] = p;

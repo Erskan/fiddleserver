@@ -57,6 +57,7 @@
     <Compile Include="Server\HTTPUpgrader.cs" />
     <Compile Include="Server\Message.cs" />
     <Compile Include="Server\SocketServer.cs" />
+    <Compile Include="Server\TickLoop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

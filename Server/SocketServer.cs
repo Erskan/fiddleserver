@@ -14,12 +14,10 @@ namespace FiddleServer.SocketServer
         private WebSocket socket;
         private HttpListenerContext request;
         private string gId;
-        private ulong tickCount;
 
         public SocketServer(HttpListenerContext hlc)
         {
             Console.WriteLine("SOCKET: Constructing socket.");
-            tickCount = 0;
             request = hlc;
             Thread.Sleep(1);
         }
@@ -27,7 +25,7 @@ namespace FiddleServer.SocketServer
         /// <summary>
         /// Handle incoming requests to the socket
         /// </summary>
-        public async void ProcessRequest()
+        public async void ProcessRequestAsync()
         {
             Console.WriteLine("SOCKET: Processing socket request.");
             WebSocketContext socketContext = null;
@@ -90,17 +88,16 @@ namespace FiddleServer.SocketServer
 
             switch (msg.message)
             {
-                // Send entire state to client
+                // Client connection
                 case "start":
                     Console.WriteLine("SOCKET: start message from player {0}.", msg.players[0].id);
                     gId = msg.players[0].id;
-                    GameState.HandleIncomingPlayer(msg.players[0]);
-                    SendMessage(JsonConvert.SerializeObject(GameState.GetGameStartMessage()));
+                    GameState.ConnectPlayer(msg.players[0]);
                     break;
                 // Regular tick
                 case "tick":
                     //Console.WriteLine("SOCKET: player message.");
-                    if (!GameState.GetTarget().Id.Equals(msg.target.Id)) // If there is a target mismatch we need to update the client target.
+                    /*if (!GameState.GetTarget().Id.Equals(msg.target.Id)) // If there is a target mismatch we need to update the client target.
                     {
                         SendMessage(JsonConvert.SerializeObject(new Message
                         {
@@ -109,8 +106,8 @@ namespace FiddleServer.SocketServer
                             target = GameState.GetTarget(),
                             alertmessage = null
                         }));
-                    }
-                    GameState.HandleIncomingPlayer(msg.players[0]);
+                    }*/
+                    GameState.UpdatePlayer(msg.players[0]);
                     break;
                 // Client disconnection
                 case "endgame":
@@ -124,12 +121,7 @@ namespace FiddleServer.SocketServer
                 case "registerpoint":
                     Console.WriteLine("SOCKET: registerpoint message.");
                     GameState.RegisterPoint(msg.players[0]);
-                    SendMessage(GameState.GetTargetMessageString());
-                    break;
-                // Client needs current target
-                case "targetrequest":
-                    Console.WriteLine("SOCKET: targetrequest message.");
-                    SendMessage(GameState.GetTargetMessageString());
+                    //SendMessage(GameState.GetTargetMessageString());
                     break;
 
 
@@ -147,9 +139,7 @@ namespace FiddleServer.SocketServer
         /// <param name="message">The message in string format</param>
         public void SendMessage(string message)
         {
-            // Don't spam the console...
             //Console.WriteLine("SOCKET: Sending message: " + message);
-            // TODO: Check if we should be sending Server.Message type back to client as well.
             SendMessageAsync(Encoding.UTF8.GetByteCount(message), Encoding.UTF8.GetBytes(message));
         }
 

@@ -6,7 +6,17 @@ namespace FiddleServer.Server
 {
     class HTTPUpgrader
     {
-        public async void Start(string listenerPrefix)
+        private TickLoop _ticker;
+        private Thread _tickerThread;
+
+        public HTTPUpgrader()
+        {
+            _ticker = new TickLoop();
+            _tickerThread = new Thread(new ThreadStart(_ticker.StartAsync));
+            _tickerThread.Start();
+        }
+
+        public async void StartAsync(string listenerPrefix)
         {
             HttpListener httpListener = new HttpListener();
             try
@@ -31,7 +41,7 @@ namespace FiddleServer.Server
                     Console.WriteLine("HTTP: Incoming connection. Starting socket thread...");
                     SocketServer.SocketServer oSocket = new SocketServer.SocketServer(httpContext);
                     GameState.AddSocket(oSocket);
-                    Thread newSocket = new Thread(new ThreadStart(oSocket.ProcessRequest));
+                    Thread newSocket = new Thread(new ThreadStart(oSocket.ProcessRequestAsync));
                     newSocket.Start();
                 }
                 else

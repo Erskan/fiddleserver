@@ -11,6 +11,7 @@ namespace FiddleServer.Server
     class Message
     {
         public string message;
+        public ulong tick;
         public List<Actors.Player> players;
         public List<Actors.PlayerModel> models;
         public Actors.Target target;
